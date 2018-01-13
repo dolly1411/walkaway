@@ -123,7 +123,4 @@ class ContributeController extends Controller
       return $text;
     }
 
-    
-
-
 }
