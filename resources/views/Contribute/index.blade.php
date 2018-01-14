@@ -82,7 +82,7 @@
 
                             <div class="form-group">
                                 <label for="exampleInputFile">Add images</label>
-                                <input type="file" name="images"  multiple="multiple" id="exampleInputFile">
+                                <input type="file" name="images[]"  multiple="multiple" id="exampleInputFile">
                             </div>
                             
                             <div class="form-group">
@@ -124,8 +124,8 @@
                                       <textarea class="form-control alert-warning" name="tip[]" rows="3" >{{ old('tip.'.$i) }}</textarea>
                                     @endfor
                                 @else
-                                    <textarea class="form-control alert-warning" name="tip[]" rows="3" >Quick note: Is parking available in this location.</textarea>
-                                    <textarea class="form-control alert-warning" name="tip[]" rows="3" >Quick note: Which is best buy ?</textarea>
+                                    <textarea class="form-control alert-warning" name="tip[]" rows="3"  placeholder="Quick note: Is parking available in this location."></textarea>
+                                    <textarea class="form-control alert-warning" name="tip[]" rows="3"  placeholder="Quick note: Which is best buy ?"></textarea>
                                 @endif
                                
                            </div>

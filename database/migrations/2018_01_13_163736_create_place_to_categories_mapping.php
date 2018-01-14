@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePointsTables extends Migration
+class CreatePlaceToCategoriesMapping extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreatePointsTables extends Migration
      */
     public function up()
     {
-        Schema::create('points', function (Blueprint $table) {
+        Schema::create('place_category_mappings', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
             $table->integer('place_id');
-            $table->integer('activiy_id');
-            $table->boolean('approved');
-            $table->boolean('status');
+            $table->integer('category_id');  
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreatePointsTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('points');
+        Schema::dropIfExists('place_category_mappings');
     }
 }
