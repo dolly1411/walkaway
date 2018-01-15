@@ -5,16 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Category; 
+use App\Place_category_mappings;
 use App\Place;
+use App\Activity;
+use App\Point;
+use App\Tip; 
+use App\Asset; 
 use Auth; 
 
 class ContributeController extends Controller
 {
-    public function __construct()
-    {
-       
-    }
-
+    /**
+     * index
+     * @var 
+     * @return true if data submitted
+    */
     public function index(){
         // Retrive sample categrories 
         $categories = Category::where('status', 1)->select('name')->get();
@@ -24,29 +29,166 @@ class ContributeController extends Controller
         }
     	return view('Contribute.index',['categories'=>implode(",",$categoryArray)]); 
     }
-
+    /**
+     * submit button clicked
+     * @var request
+     * @return true if data submitted
+    */
     public function submit(Request $request){
+  
        $Validator = Validator::make($request->all(),[
                                         'name'=>'required|min:2|max:225',
                                         'location'=>'required|min:2',
                                         'categories'=>'required',
                                         'brief'=>'required|min:2',
+                                        'image.*'=>'mimetypes:image/jpeg,image/png'
                                         ]); 
-       
-
-      if ($Validator->fails()) {
+        if ($Validator->fails()) {
              return redirect()->action('ContributeController@index')->withInput()->withErrors($Validator->errors()); 
          } else {
-             $input = $request->all();
+                    $input = $request->all();
 
-             //filter new category and save new in category table with approved 0 
-             $categoryIds = $this->filterCategories(explode(',', $input['categories'])); 
-             //Save place  with user_id and approved = 0
-             $place_id = $this->savePlace($input); 
+                    //dd($input); 
 
-         }   
+                    //filter new category and save new in category table with approved 0 
+                    $categoryIds = $this->filterCategories(explode(',', $input['categories'])); 
+                    //Save place  with user_id and approved = 0
+                    $place_id = $this->savePlace($input); 
+
+                    //saving place_id and category id in db and creating mapping
+                    $arr=array();
+                    foreach ($categoryIds as $value) {
+                    array_push($arr, array('place_id'=>$place_id,'category_id'=>$value));    
+                    }
+                    Place_category_mappings::insert($arr);
+
+                    //create points for logged in user
+                    if(Auth::check()){
+                        $this->pointsOnCreatePlace($input,$place_id); 
+                        
+                        //process images
+                        if ($request->hasFile('images'))
+                        {
+                            $files = $request->file('images');
+                            $this->save_image($files,$place_id);
+                        }
+                    }
+
+                    //dd($place_id); 
+
+                }   }
+    /**
+     * Non-approved or approved points till date by user
+     * @var 
+     * @return true if data submitted
+    */
+    public function expectedPoints(){
+        return view('Contribute.points');
     }
+    /**
+     * return images in images\places folder
+     * @var files,place_id
+     * @return true if data submitted
+    */
+    private function save_image($files,$place_id){
+        $array = array(); 
+        $points=array();
+        $activities = Activity::select('id','activity_enum')
+                                ->where(['activity_group'=>'CREATE_PLACE'])
+                                ->get();
+        $activity_id = $this->activityIdsFromArray($activities,'CREATE_PLACE_IMAGE');                
+        foreach($files as $file){
+            $extension = $file->getClientOriginalExtension();
+            $filename = str_random(5)."-".date('his')."-".str_random(3).".".$extension;
+            $destinationPath = base_path() . '\public\images\places';
+            $file->move($destinationPath, $filename);
+            array_push($array, array('type'=>'IMAGE','value'=>$filename,'place_id'=>$place_id,'user_id'=>Auth::user()->id,'status'=>'0'));
+            array_push($points, array('place_id' =>$place_id ,
+                                      'user_id'=>Auth::user()->id,
+                                      'activity_id'=>$activity_id,
+                                      'approved'=>0,
+                                      'status'=>0)); 
+        }
 
+
+        Asset::insert($array); 
+        Point::insert($points); }
+
+    /**
+     * create poitns in Points table on creating place via place_title,place_location,place_brief,place_description,tip and images
+     * @var placeData,place_id
+     * @return true if data submitted
+    */
+     private function pointsOnCreatePlace($placeData,$place_id){
+        if(!empty($placeData))
+        {
+
+                    $activities = Activity::select('id','activity_enum')
+                                        ->where(['activity_group'=>'CREATE_PLACE'])
+                                        ->get();
+                    $array = array(); 
+                    $mapping = array('name'=>'CREATE_PLACE_TITLE',
+                                        'location'=>'CREATE_PLACE_LOCATION',
+                                        'brief'=>'CREATE_PLACE_BREIF',
+                                        'content'=>'CREATE_PLACE_DESCRIPTION'
+
+                                    ); 
+                    foreach ($mapping as $key => $value) {
+                        if (!empty($placeData[$key])) {
+                           $activity_id = $this->activityIdsFromArray($activities,$value); 
+                           array_push($array,array(
+                                                    'user_id'=>Auth::user()->id,
+                                                    'place_id'=>$place_id,
+                                                    'activity_id'=>$activity_id,
+                                                    'approved'=>0,
+                                                    'status'=>0,
+                                                    ));
+                        }
+                    }
+                    // check tips 
+                    $saveTips = array(); 
+                    foreach ($placeData['tip'] as $tip) {
+                        if (!empty($tip)) {
+                            array_push($saveTips,array('text'=>$tip,
+                                                        'place_id'=>$place_id,
+                                                        'user_id'=>Auth::user()->id,
+                                                        'status'=>0,
+                                                        )); 
+                            $activity_id = $this->activityIdsFromArray($activities,'CREATE_PLACE_TIP'); 
+                            array_push($array,array(
+                                                    'user_id'=>Auth::user()->id,
+                                                    'place_id'=>$place_id,
+                                                    'activity_id'=>$activity_id,
+                                                    'approved'=>0,
+                                                    'status'=>0,
+                                                    ));   
+                        }
+                    }
+
+                    //handle images
+                    
+                    if(count($saveTips)>0){
+                        Tip::insert($saveTips);
+                    }
+                    Point::insert($array);} 
+    }
+    /**
+     * return activity id from activties table
+     * @var array,enum
+     * @return true if data submitted
+    */
+    public static function activityIdsFromArray($array,$enum){
+        foreach ($array as $activity) {
+            if($activity->activity_enum == $enum){
+                return $activity->id; 
+            }
+        } }
+
+    /**
+     * filter category from suggested category and categories by default present in table
+     * @var suggestedCategories
+     * @return true if data submitted
+    */
     private function filterCategories($suggestedCategories = array()){
             // fetching all already approved categories
             $categories = Category::where('status', 1)->select('name')->get();
@@ -92,19 +234,15 @@ class ContributeController extends Controller
                                  'user_id'=>$user_id,
                                  'status'=>0,
                                  'approved'=>0); 
-       return Place::insertGetId($place); // return last inserted row id 
+       return Place::insertGetId($place); // return last inserted row id
     }
 
-    private function pointsOnCreatePlace($placeData){
-        dd($placeData);
-        echo '<pre>'; 
-        print_r($placeData) ;
-        die(); 
-    }
-
-
-    private function slugify($text)
-    {
+    /**
+    *create alias name in categories table
+    *@var text
+    *@return true if data is submitted
+    */
+    private function slugify($text){
       // replace non letter or digits by -
       $text = preg_replace('~[^\pL\d]+~u', '-', $text);
       // transliterate

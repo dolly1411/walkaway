@@ -26,4 +26,5 @@ Route::get('login/google/callback/', 'Auth\LoginController@handleProviderCallbac
 
 //contribute section 
 Route::get('suggest-new-places','ContributeController@index')->name('contribute.index'); 
-Route::post('contribute/submit','ContributeController@submit')->name('contribute.submit'); 
+Route::post('contribute/submit','ContributeController@submit')->name('contribute.submit');
+Route::get('know-your-points','ContributeController@expectedPoints')->name('contribute.expectedpoints'); 

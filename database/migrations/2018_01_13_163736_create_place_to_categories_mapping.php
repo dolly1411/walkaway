@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAssetsTable extends Migration
+class CreatePlaceToCategoriesMapping extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateAssetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('assets', function (Blueprint $table) {
+        Schema::create('place_category_mappings', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('type');
-            $table->text('value');
             $table->integer('place_id');
-            $table->integer('user_id');
-            $table->boolean('status');
+            $table->integer('category_id');  
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateAssetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assets');
+        Schema::dropIfExists('place_category_mappings');
     }
 }

@@ -17,8 +17,7 @@ class CreatePointsTables extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('place_id');
-            $table->integer('activiy_id');
-            $table->text('information_json');
+            $table->integer('activity_id');
             $table->boolean('approved');
             $table->boolean('status');
             $table->timestamps();

@@ -73,7 +73,7 @@ $(document).ready(function() {
 $('#categoriesInput').tagsinput({});
 
 $( ".add_tip_btn" ).on( "click", function() {
-  $('#tip_section').append('<textarea class="form-control alert-warning" name="tip[]" rows="4" ></textarea>');
+  $('#tip_section').append('<textarea class="form-control alert-warning" name="tip[]" rows="4" placeholder="Add tip to your place" ></textarea>');
 });
 
 $( ".remove_tip_btn" ).on( "click", function() {
