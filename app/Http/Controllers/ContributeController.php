@@ -27,7 +27,7 @@ class ContributeController extends Controller
         foreach ($categories as $category) {
             $categoryArray[] = $category->name;
         }
-    	return view('Contribute.index',['categories'=>implode(",",$categoryArray)]); 
+        return view('Contribute.index',['categories'=>implode(",",$categoryArray)]); 
     }
     /**
      * submit button clicked
