@@ -359,6 +359,7 @@ class ComposerStaticInit0961efbdcaaad8f32e33bfb9db317281
     );
 
     public static $classMap = array (
+        'App\\Activity' => __DIR__ . '/../..' . '/app/Activity.php',
         'App\\Asset' => __DIR__ . '/../..' . '/app/Asset.php',
         'App\\Category' => __DIR__ . '/../..' . '/app/Category.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
@@ -377,6 +378,8 @@ class ComposerStaticInit0961efbdcaaad8f32e33bfb9db317281
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Place' => __DIR__ . '/../..' . '/app/Place.php',
+        'App\\Place_category_mappings' => __DIR__ . '/../..' . '/app/Place_category_mappings.php',
+        'App\\Point' => __DIR__ . '/../..' . '/app/Point.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',

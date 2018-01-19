@@ -83,6 +83,24 @@ class ContributeController extends Controller
      * @return true if data submitted
     */
     public function expectedPoints(){
+       $user_id = Auth::user()->id; 
+       $points = Point::select('user_id','created_at','place_id','activity_id')->where([['approved','0'],['status','0'],['user_id',$user_id]])->groupBy('user_id','created_at','place_id','activity_id')->get(); 
+
+
+       foreach ($points as $point) {
+          $place = $point->place;
+          $activity = $point->activity;  
+          $asset=$point->asset;
+          
+          echo $point->created_at.'<br/>';
+          echo $place->title.'<br/>'; 
+          echo $place->location.'<br/>';
+          echo $place->description.'<br/>';  
+          echo $activity->points.'<br/>'; 
+          
+          echo '<br/>'; 
+       }
+       die(); 
         return view('Contribute.points');
     }
     /**
