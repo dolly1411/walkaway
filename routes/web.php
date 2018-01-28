@@ -28,3 +28,5 @@ Route::get('login/google/callback/', 'Auth\LoginController@handleProviderCallbac
 Route::get('suggest-new-places','ContributeController@index')->name('contribute.index'); 
 Route::post('contribute/submit','ContributeController@submit')->name('contribute.submit');
 Route::get('know-your-points','ContributeController@expectedPoints')->middleware('admin')->name('contribute.expectedpoints'); 
+Route::get('admin','ContributeController@admin')->middleware('admin')->name('contribute.admin');
+Route::get('admin/approve','ContributeController@admin_approve')->middleware('admin')->name('contribute.admin_approve');

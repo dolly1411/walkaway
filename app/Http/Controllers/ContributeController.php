@@ -11,6 +11,7 @@ use App\Activity;
 use App\Point;
 use App\Tip; 
 use App\Asset; 
+use App\User;
 use Auth; 
 
 class ContributeController extends Controller
@@ -28,6 +29,24 @@ class ContributeController extends Controller
             $categoryArray[] = $category->name;
         }
         return view('Contribute.index',['categories'=>implode(",",$categoryArray)]); 
+    }
+
+    public function admin()
+    {
+       $user_id = Auth::user()->id;
+        $user_name = User::select('name')
+                    ->where(['id'=>$user_id]) 
+                    ->first();
+      return view('admin.admin',['name'=>$user_name->name]);
+    }
+
+    public function admin_approve()
+    {
+        $user_id = Auth::user()->id;
+        $user_name = User::select('name')
+                    ->where(['id'=>$user_id]) 
+                    ->first();
+      return view('admin.approve_activity',['name'=>$user_name->name]);
     }
     /**
      * submit button clicked
@@ -82,7 +101,7 @@ class ContributeController extends Controller
      * @var 
      * @return true if data submitted
     */
-    public function expectedPoints(){
+  public function expectedPoints(){
        $user_id = Auth::user()->id; 
        $points = Point::select('user_id','created_at','place_id','activity_id')->where([['approved','0'],['status','0'],['user_id',$user_id]])->groupBy('user_id','created_at','place_id','activity_id')->get(); 
 
