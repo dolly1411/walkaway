@@ -12,6 +12,7 @@ use App\Point;
 use App\Tip; 
 use App\Asset; 
 use App\User;
+use App\ActivityGroup;
 use Auth; 
 
 class ContributeController extends Controller
@@ -93,34 +94,86 @@ class ContributeController extends Controller
                         }
                     }
 
-                    //dd($place_id); 
+                    return redirect()->action('ContributeController@expectedPoints'); 
 
-                }   }
+                }   
+    }
     /**
      * Non-approved or approved points till date by user
      * @var 
      * @return true if data submitted
     */
-  public function expectedPoints(){
-       $user_id = Auth::user()->id; 
-       $points = Point::select('user_id','created_at','place_id','activity_id')->where([['approved','0'],['status','0'],['user_id',$user_id]])->groupBy('user_id','created_at','place_id','activity_id')->get(); 
 
+    public function expectedPoints(){
 
-       foreach ($points as $point) {
-          $place = $point->place;
-          $activity = $point->activity;  
-          $asset=$point->asset;
-          
-          echo $point->created_at.'<br/>';
-          echo $place->title.'<br/>'; 
-          echo $place->location.'<br/>';
-          echo $place->description.'<br/>';  
-          echo $activity->points.'<br/>'; 
-          
-          echo '<br/>'; 
-       }
-       die(); 
-        return view('Contribute.points');
+       $pointsData = Point::leftJoin('places', 'points.place_id', '=', 'places.id')
+       ->leftJoin('activities','points.activity_id','=','activities.id')
+       ->select(['points.created_at','activities.activity_group','activities.points','places.title','points.place_id'])->where([
+                    ['points.status', '=', '0'],
+                    ['points.approved', '=', '0'],
+                    ['points.user_id', '=', Auth::user()->id],
+                ])->get();
+        $pointsDataApproved = Point::leftJoin('places', 'points.place_id', '=', 'places.id')
+        ->leftJoin('activities','points.activity_id','=','activities.id')
+        ->select(['points.created_at','activities.activity_group','activities.points','places.title','points.place_id'])->where([
+                        ['points.status', '=', '1'],
+                        ['points.approved', '=', '1'],
+                        ['points.user_id', '=', Auth::user()->id],
+                    ])->get();
+        $dataFinal = array();
+        $dataFinalApproved = array();         
+        foreach ($pointsData as $key => $points) {
+            $data = array(); 
+            $data['created_at'] = $points->created_at->format('Y-m-d H:i');; 
+            $data['activity_group'] = $points->activity_group;
+            $data['points'] = $points->points;
+            $data['title'] = $points->title; 
+            $data['place_id'] = $points->place_id; 
+            $dataFinal[] = $data; 
+        }
+        foreach ($pointsDataApproved as $key => $points) {
+            $data = array(); 
+            $data['created_at'] = $points->created_at->format('Y-m-d H:i');; 
+            $data['activity_group'] = $points->activity_group;
+            $data['points'] = $points->points;
+            $data['title'] = $points->title; 
+            $data['place_id'] = $points->place_id; 
+            $dataFinalApproved[] = $data; 
+        }
+    
+        $dataUnapproved = $this->cleanPointsData($dataFinal);
+        $dataApproved = $this->cleanPointsData($dataFinalApproved);
+
+        $activity_groups = ActivityGroup::select(['activity_group','content'])->get(); 
+        $activity_groups_arr = array(); 
+        foreach ($activity_groups as $activity_group) {
+            $activity_groups_arr[$activity_group->activity_group] = $activity_group->content;
+        }
+        return view('Contribute.points',
+                                    [   'places_array'=>$dataUnapproved['place_titles'],
+                                        'points'=>$dataUnapproved['points'],
+                                        'places_array_approved'=>$dataApproved['place_titles'],
+                                        'points_approved'=>$dataApproved['points'],
+                                        'activity_groups'=>$activity_groups_arr]);
+    }
+
+    public function cleanPointsData($points){
+        $data = array(); 
+        $place_titles = array(); 
+        foreach ($points as $key => $point) {
+            if(isset($data[$point['created_at']][$point['place_id']][$point['activity_group']])){
+                $data[$point['created_at']][$point['place_id']][$point['activity_group']]['points']  =  
+                $data[$point['created_at']][$point['place_id']][$point['activity_group']]['points']  + 
+                $point['points'];
+            }else{
+                $data[$point['created_at']][$point['place_id']][$point['activity_group']]['points']  = 0 ;
+                $data[$point['created_at']][$point['place_id']][$point['activity_group']]['points']  =  
+                $data[$point['created_at']][$point['place_id']][$point['activity_group']]['points']  + 
+                $point['points'];
+            }
+            $place_titles[$point['place_id']] = $point['title']; 
+        }
+        return ['points'=>$data,'place_titles'=>$place_titles];
     }
     /**
      * return images in images\places folder
@@ -170,6 +223,7 @@ class ContributeController extends Controller
                                         'content'=>'CREATE_PLACE_DESCRIPTION'
 
                                     ); 
+                                    
                     foreach ($mapping as $key => $value) {
                         if (!empty($placeData[$key])) {
                            $activity_id = $this->activityIdsFromArray($activities,$value); 
@@ -182,6 +236,7 @@ class ContributeController extends Controller
                                                     ));
                         }
                     }
+
                     // check tips 
                     $saveTips = array(); 
                     foreach ($placeData['tip'] as $tip) {
@@ -207,19 +262,21 @@ class ContributeController extends Controller
                     if(count($saveTips)>0){
                         Tip::insert($saveTips);
                     }
-                    Point::insert($array);} 
+                    Point::insert($array);
+        } 
     }
     /**
      * return activity id from activties table
      * @var array,enum
      * @return true if data submitted
     */
-    public static function activityIdsFromArray($array,$enum){
+    public function activityIdsFromArray($array,$enum){
         foreach ($array as $activity) {
             if($activity->activity_enum == $enum){
                 return $activity->id; 
             }
-        } }
+        } 
+    }
 
     /**
      * filter category from suggested category and categories by default present in table
@@ -298,4 +355,22 @@ class ContributeController extends Controller
       return $text;
     }
 
+    public function dailyLoginPoints(){ 
+        
+        if(Auth::check()){
+            //get activity id for daily login activity
+            $activity = Activity::select('id')->where(['activity_enum'=>'DAILY LOGIN'])->first();
+            //get count of daily count instance
+            $point = Point::where(['user_id'=>Auth::user()->id,'activity_id'=>$activity->id,'place_id'=>0])
+                    ->whereDate('created_at', date('Y-m-d'))->count();
+            if($point == 0){
+                Point::insert(
+                    ['user_id'=>Auth::user()->id,'activity_id'=>$activity->id,'place_id'=>0,'approved'=>1,'status'=>1]
+                );
+                return redirect('/'); 
+            }else{
+                return redirect('/'); 
+            }        
+        }
+    }
 }

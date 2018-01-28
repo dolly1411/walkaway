@@ -107,3 +107,10 @@
 .form-group .info-custom{
 	font-size: 11px; 
 }
+
+.tab-pane{
+  border-left: 1px solid #cccccc;
+  border-right: 1px solid #cccccc; 
+  border-bottom: 1px solid #cccccc; 
+  border-radius: 0px 0px 2px 2px;
+}

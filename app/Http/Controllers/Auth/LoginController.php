@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ContributeController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 use Socialite;
 use App\User;
+use App\Activity;
+use App\Point; 
 use Auth; 
 use Hash; 
 
@@ -31,7 +34,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/daily-login-points';
 
     /**
      * Create a new controller instance.
@@ -66,7 +69,7 @@ class LoginController extends Controller
         $user = User::where('email',$authenticated_user->email)->first(); 
         if($user){
            Auth::loginUsingId($user->id);
-           return redirect('/home');
+           return redirect('/daily-login-points');
         }else{
             // creare a new user and store in DB
             $user = new User; 
@@ -77,10 +80,12 @@ class LoginController extends Controller
             $user->social_reg = 'Google'; 
             $user->save(); 
             // after user created authenticate user
-            Auth::loginUsingId($user->id);
-            return redirect('/home');
+            return redirect('/daily-login-points');
         }
         return redirect('/login');
     }
+
+    
+
 
 }
