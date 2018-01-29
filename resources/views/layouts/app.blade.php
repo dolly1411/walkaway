@@ -62,6 +62,7 @@
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
+                                        <a href="{{ route('contribute.expectedpoints') }}">My Points</a>
                                         <a href="{{ route('home.changepassword') }}">Change Password</a>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
