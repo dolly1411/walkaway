@@ -18,6 +18,7 @@ class ComposerStaticInit0961efbdcaaad8f32e33bfb9db317281
         'e7223560d890eab89cda23685e711e2c' => __DIR__ . '/..' . '/psy/psysh/src/Psy/functions.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
+        '2cc22c08d8f119e29ed82f6338b263e0' => __DIR__ . '/../..' . '/app/Helpers/GenericHelpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -360,6 +361,7 @@ class ComposerStaticInit0961efbdcaaad8f32e33bfb9db317281
 
     public static $classMap = array (
         'App\\Activity' => __DIR__ . '/../..' . '/app/Activity.php',
+        'App\\ActivityGroup' => __DIR__ . '/../..' . '/app/ActivityGroup.php',
         'App\\Asset' => __DIR__ . '/../..' . '/app/Asset.php',
         'App\\Category' => __DIR__ . '/../..' . '/app/Category.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',

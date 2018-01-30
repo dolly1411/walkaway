@@ -23,10 +23,11 @@ Route::post('/processchangepassword', 'HomeController@processchangepassword')->n
 /* Google authenticate route */
 Route::get('login/google', 'Auth\LoginController@redirectToProvider')->name('auth.googlelogin');
 Route::get('login/google/callback/', 'Auth\LoginController@handleProviderCallback');
-
+ 
 //contribute section 
 Route::get('suggest-new-places','ContributeController@index')->name('contribute.index'); 
 Route::post('contribute/submit','ContributeController@submit')->name('contribute.submit');
-Route::get('daily-login-points','ContributeController@dailyLoginPoints')->name('contribute.dailylogin');
-Route::get('know-your-points','ContributeController@expectedPoints')->middleware('admin')->name('contribute.expectedpoints');
+Route::get('daily-login-points','ContributeController@dailyLoginPoints')->name('contribute.dailylogin')->middleware('auth');
+Route::get('know-your-points','ContributeController@expectedPoints')->name('contribute.expectedpoints')->middleware('auth');
+Route::get('register-points','ContributeController@registerPoints')->name('contribute.registerpoints')->middleware('auth');
 

@@ -85,21 +85,21 @@ class ContributeController extends Controller
      * @return true if data submitted
     */
     public function expectedPoints(){
-
+        
        $pointsData = Point::leftJoin('places', 'points.place_id', '=', 'places.id')
        ->leftJoin('activities','points.activity_id','=','activities.id')
        ->select(['points.created_at','activities.activity_group','activities.points','places.title','points.place_id'])->where([
                     ['points.status', '=', '0'],
                     ['points.approved', '=', '0'],
                     ['points.user_id', '=', Auth::user()->id],
-                ])->get();
+                ])->orderBy('points.id', 'desc')->get();
         $pointsDataApproved = Point::leftJoin('places', 'points.place_id', '=', 'places.id')
         ->leftJoin('activities','points.activity_id','=','activities.id')
         ->select(['points.created_at','activities.activity_group','activities.points','places.title','points.place_id'])->where([
                         ['points.status', '=', '1'],
                         ['points.approved', '=', '1'],
                         ['points.user_id', '=', Auth::user()->id],
-                    ])->get();
+                    ])->orderBy('points.id', 'desc')->get();
         $dataFinal = array();
         $dataFinalApproved = array();         
         foreach ($pointsData as $key => $points) {
@@ -277,7 +277,7 @@ class ContributeController extends Controller
             //saving new categories
             $new_categories = array(); 
             foreach ($diff as $value) {
-                array_push($new_categories, array('name'=>ucfirst($value),'alias'=>$this->slugify($value),'status'=>0)); 
+                array_push($new_categories, array('name'=>ucfirst($value),'alias'=>slugify($value),'status'=>0)); 
             }
             Category::insert($new_categories);
             //return Ids categories 
@@ -311,30 +311,6 @@ class ContributeController extends Controller
        return Place::insertGetId($place); // return last inserted row id
     }
 
-    /**
-    *create alias name in categories table
-    *@var text
-    *@return true if data is submitted
-    */
-    private function slugify($text){
-      // replace non letter or digits by -
-      $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-      // transliterate
-      $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-      // remove unwanted characters
-      $text = preg_replace('~[^-\w]+~', '', $text);
-      // trim
-      $text = trim($text, '-');
-      // remove duplicate -
-      $text = preg_replace('~-+~', '-', $text);
-      // lowercase
-      $text = strtolower($text);
-      if (empty($text)) {
-        return 'n-a';
-      }
-      return $text;
-    }
-
     public function dailyLoginPoints(){ 
         
         if(Auth::check()){
@@ -351,6 +327,26 @@ class ContributeController extends Controller
             }else{
                 return redirect('/'); 
             }        
+        }else{
+            return redirect('/login'); 
         }
     }
+
+    public function registerPoints(){
+        if(Auth::check()){
+            //get activity id for daily login activity
+            $activity = Activity::select('id')->where(['activity_enum'=>'REGISTER'])->first();
+            //get count of daily count instance
+            $point = Point::where(['user_id'=>Auth::user()->id,'activity_id'=>$activity->id,'place_id'=>0])->count();
+            if($point == 0){
+                Point::insert(
+                    ['user_id'=>Auth::user()->id,'activity_id'=>$activity->id,'place_id'=>0,'approved'=>1,'status'=>1]
+                );
+                return redirect('/'); 
+            }else{
+                return redirect('/'); 
+            }        
+        }
+    }
+    
 }

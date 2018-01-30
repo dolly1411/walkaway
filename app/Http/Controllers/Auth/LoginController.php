@@ -79,8 +79,9 @@ class LoginController extends Controller
             $user->password = Hash::make($authenticated_user->name); 
             $user->social_reg = 'Google'; 
             $user->save(); 
+            Auth::loginUsingId($user->id);
             // after user created authenticate user
-            return redirect('/daily-login-points');
+            return redirect('/register-points');
         }
         return redirect('/login');
     }

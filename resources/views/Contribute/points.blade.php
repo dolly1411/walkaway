@@ -36,12 +36,15 @@
                                                                     @foreach($points as $point )
                                                                     <?php $point_total = $point_total + $point;  ?>
                                                                     <?php $grand_total = $grand_total + $point;  ?>
-                                                                    and  <b>{{$point_total}} pts</b> are under review. ( {{$time}} )
+                                                                    and  <b>{{$point_total}} pts</b> are under review. ( {{time_elapsed_string($time)}} )
                                                                     @endforeach
                                                                 @endforeach
                                                             </li>
                                                             @endforeach
-                                        @endforeach   
+                                        @endforeach 
+                                        @if( $grand_total == 0 )
+                                            <li class="list-group-item">Start <a href="{{ route('contribute.index') }}">contributing</a> to earn points. </li>
+                                        @endif
                                     </ul>
                                 </div>
                             <div class="col-md-4 text-center">
@@ -69,12 +72,15 @@
                                                                     @foreach($points as $point )
                                                                     <?php $point_total = $point_total + $point;  ?>
                                                                     <?php $grand_total = $grand_total + $point;  ?>
-                                                                    and earned <b>{{$point_total}} pts</b>. ( {{$time}} )
+                                                                    and earned <b>{{$point_total}} pts</b>. ( {{time_elapsed_string($time)}} )
                                                                     @endforeach
                                                                 @endforeach
                                                             </li>
                                                             @endforeach
                                         @endforeach 
+                                        @if( $grand_total == 0 )
+                                            <li class="list-group-item">Start <a href="{{ route('contribute.index') }}">contributing</a> to earn points. </li>
+                                        @endif
                                         </ul>
                                     </div>
                                  <div class="col-md-4 text-center">
