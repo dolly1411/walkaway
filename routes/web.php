@@ -31,3 +31,5 @@ Route::get('daily-login-points','ContributeController@dailyLoginPoints')->name('
 Route::get('know-your-points','ContributeController@expectedPoints')->name('contribute.expectedpoints')->middleware('auth');
 Route::get('register-points','ContributeController@registerPoints')->name('contribute.registerpoints')->middleware('auth');
 
+//admin section 
+Route::get('admin/dashboard','AdminController@index')->name('admin.dashboard'); 

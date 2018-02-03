@@ -64,6 +64,9 @@
                                     <li>
                                         <a href="{{ route('contribute.expectedpoints') }}">My Points</a>
                                         <a href="{{ route('home.changepassword') }}">Change Password</a>
+                                        @if (Auth::user()->type == 1)
+                                            <a href="{{ route('admin.dashboard') }}">Admin dashboard</a>
+                                        @endif
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
