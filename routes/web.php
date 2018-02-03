@@ -16,7 +16,6 @@ Route::get('/', 'HomeController@index')->name('home');
 Auth::routes();
 
 /* home controller routes */
-Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/changepassword', 'HomeController@changepassword')->name('home.changepassword')->middleware('auth');
 Route::post('/processchangepassword', 'HomeController@processchangepassword')->name('home.processchangepassword')->middleware('auth');
 
@@ -32,4 +31,5 @@ Route::get('know-your-points','ContributeController@expectedPoints')->name('cont
 Route::get('register-points','ContributeController@registerPoints')->name('contribute.registerpoints')->middleware('auth');
 
 //admin section 
-Route::get('admin/dashboard','AdminController@index')->name('admin.dashboard'); 
+Route::get('admin/dashboard','AdminController@index')->name('admin.dashboard');
+Route::get('admin/users','AdminController@userlist')->name('admin.user_list'); 

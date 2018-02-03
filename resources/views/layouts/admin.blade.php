@@ -16,6 +16,9 @@
     <link href="{{ asset('admin/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="{{ asset('admin/build/css/custom.min.css') }}" rel="stylesheet">
+    <!-- Datatables -->
+    <link herf="{{ asset('admin/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+    
   </head>
 
   <body class="nav-md">
@@ -25,7 +28,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><i class="fa fa-user"></i> <span>Gentelella Alela!</span></a>
+              <a href="{{route('home')}}" class="site_title"><i class="fa fa-fort-awesome"></i><span> Walkaway !</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -50,7 +53,14 @@
                 <h3>General</h3>
                 <ul class="nav side-menu">
                   <li>
-                      <a><i class="fa fa-check"></i> Approvals <span class="fa fa-chevron-down"></span></a>
+                      <a href="{{route('admin.dashboard')}}"><i class="fa fa-calculator"></i>Dashboard</a>
+                  </li>
+                  <li>
+                      <a><i class="fa fa-check"></i>Approvals</a>
+                  </li>
+                  <li>
+                      <a href="{{route('admin.user_list')}}"><i class="fa fa-user"></i>User
+                      </a>
                   </li>
                 </ul>
               </div>
@@ -92,44 +102,6 @@
 
         <!-- page content -->
         @yield('page_content')
-        <div class="right_col" role="main">
-          <div class="">
-            <div class="row top_tiles">
-              <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="tile-stats">
-                  <div class="icon"><i class="fa fa-caret-square-o-right"></i></div>
-                  <div class="count">179</div>
-                  <h3>New Sign ups</h3>
-                  <p>Lorem ipsum psdea itgum rixt.</p>
-                </div>
-              </div>
-              <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="tile-stats">
-                  <div class="icon"><i class="fa fa-comments-o"></i></div>
-                  <div class="count">179</div>
-                  <h3>New Sign ups</h3>
-                  <p>Lorem ipsum psdea itgum rixt.</p>
-                </div>
-              </div>
-              <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="tile-stats">
-                  <div class="icon"><i class="fa fa-sort-amount-desc"></i></div>
-                  <div class="count">179</div>
-                  <h3>New Sign ups</h3>
-                  <p>Lorem ipsum psdea itgum rixt.</p>
-                </div>
-              </div>
-              <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                <div class="tile-stats">
-                  <div class="icon"><i class="fa fa-check-square-o"></i></div>
-                  <div class="count">179</div>
-                  <h3>New Sign ups</h3>
-                  <p>Lorem ipsum psdea itgum rixt.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <!-- /page content -->
 
         <!-- footer content -->
@@ -148,6 +120,8 @@
     <script src="{{ asset('admin/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('admin/build/js/custom.min.js') }}"></script>
+    <!-- Datatables -->
+    <script src="{{ asset('admin/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 	
   </body>
 </html>
