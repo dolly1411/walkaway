@@ -6,7 +6,7 @@
         <div class="">
           <div class="page-title">
             <div class="title_left">
-              <h3>Users <small>| Listing all user from website</small></h3>
+              <h3>User Module<small>| Listing all user from website</small></h3>
             </div>
 
           </div>
@@ -27,25 +27,34 @@
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
+                        <th>Email</th>
+                        <th>Social Login</th>
+                        <th>Type</th>
+                        <th>Created</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
 
 
                     <tbody>
-                      <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td>$320,800</td>
-                      </tr>
-                      
+                      @foreach ($users as $user)
+                        <tr>
+                          <td>{{$user->name}}</td>
+                          <td>{{$user->email}}</td>
+                          <td>{{$user->social_reg}}</td>
+                          <td>
+                            @if ($user->type == 1)
+                              Admin
+                            @else
+                                User
+                            @endif
+                           </td>
+                          <td>{{$user->created_at}}</td>
+                          <td>
+                            <a class="btn btn-info" href="#">Edit</a>
+                          </td>
+                        </tr>
+                      @endforeach
                     </tbody>
                   </table>
                 </div>

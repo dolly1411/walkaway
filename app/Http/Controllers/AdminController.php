@@ -7,6 +7,8 @@ use Auth;
 use App\User;
 use App\Point; 
 use App\Place; 
+use Validator; 
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -29,6 +31,37 @@ class AdminController extends Controller
         }
 
         public function userlist(){
-            return view('Admin.user_list');
+            $users = User::get();
+            return view('Admin.user_list',compact('users'));
+        }
+
+        public function userview($id)
+        {
+            $usertype_option = [0=>'User',1=>'Admin']; //1 => for Admin
+            if($id == 0){
+                return view('Admin.user_edit',compact('usertype_option'));
+            }else{
+                $user = User::find($id); 
+                if($user == null){
+                    return redirect(route('admin.user_list')); 
+                }else{
+                    
+                    return view('Admin.user_edit',compact('user','usertype_option')); 
+                }
+            }
+        }
+
+        public function useredit(Request $request){
+            $post_data  = $request->all();
+            $validator =  Validator::make($post_data, [
+                'name'=>'required|min:8|max:255',
+                'email'=>'required|email',
+                'type'=>['required',Rule::in([0,1])]
+            ]);
+            if ($validator->fails()){
+                return redirect()->back()->withErrors($validator->errors());
+            }else{
+                dd($post_data);
+            }
         }
 }
