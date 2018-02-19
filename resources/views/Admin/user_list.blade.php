@@ -7,6 +7,12 @@
           <div class="page-title">
             <div class="title_left">
               <h3>User Module<small>| Listing all user from website</small></h3>
+              @if($error_msg = session('error_msg'))
+                <div class="alert alert-danger" role="alert">{{ $error_msg }}</div>
+              @endif
+              @if($success_msg = session('success_msg'))
+                <div class="alert alert-success" role="alert">{{ $success_msg }}</div>
+              @endif
             </div>
 
           </div>
@@ -18,11 +24,10 @@
               <div class="x_panel">
                 <div class="x_title">
                   <h2>User</h2>
-                 
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  
+                  <a href="{{ route('admin.user',0) }}" class="btn btn-success">Add user</a>
                   <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                       <tr>
@@ -51,7 +56,8 @@
                            </td>
                           <td>{{$user->created_at}}</td>
                           <td>
-                            <a class="btn btn-info" href="#">Edit</a>
+                            <a class="btn btn-info" href="{{ route('admin.user',$user->id) }}">Edit</a>
+                            <a class="btn btn-danger" onclick="function(){if(confirm('Are you sure ?')?return true; :return false; )}" href="{{ route('admin.user_delete',$user->id) }}">Delete</a>
                           </td>
                         </tr>
                       @endforeach
@@ -66,3 +72,19 @@
       </div>
       <!-- /page content -->
 @endsection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

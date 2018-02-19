@@ -6,12 +6,18 @@
             <div class="page-title">
                 <div class="title_left">
                     <h3>User Module</h3>
+                    @if($error_msg = session('error_msg'))
+                      <div class="alert alert-danger" role="alert">{{ $error_msg }}</div>
+                    @endif
+                    @if($success_msg = session('success_msg'))
+                      <div class="alert alert-success" role="alert">{{ $success_msg }}</div>
+                    @endif
                 </div>
             </div>
 
           <div class="clearfix"></div>
 
-          <div class="row">
+          <div class="col">
                 <div class="col-md-6 col-xs-12">
                         <div class="x_panel">
                           <div class="x_title">
@@ -20,7 +26,8 @@
                           </div>
                           <div class="x_content">
                             <br />
-                            <form class="form-horizontal" method="POST" action="{{ route('user.edit',(isset($user) ?  : 0))}}">
+                            <form class="form-horizontal" method="POST" action="{{ route('user.edit',(isset($user) ? $user->id : 0))}}">
+                              <input type="hidden" name="id" value="{{ (isset($user) ? $user->id : 0) }}">
                               {{ csrf_field() }}
                               <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Name</label>
@@ -44,6 +51,30 @@
                                         @endif
                                     </div>
                               </div>
+                              @if (!isset($user))
+                                  <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Password</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                      <input type="text" class="form-control" name="password" value="{{ old('password') }}" >
+                                        @if ($errors->has('password'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('password') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                 </div>
+                                 <div class="form-group {{ $errors->has('confirm_password') ? ' has-error' : '' }}">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Confirm password</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                      <input type="text" class="form-control" name="confirm_password" value="{{ old('password') }}" >
+                                        @if ($errors->has('confirm_password'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('confirm_password') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                 </div>
+                              @endif
                               <div class="form-group {{ $errors->has('type') ? ' has-error' : '' }} ">
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12">User Type</label>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
@@ -64,7 +95,7 @@
                               <div class="ln_solid"></div>
                               <div class="form-group">
                                 <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
-                                  <button type="reset" class="btn btn-primary">Cancel</button>
+                                  <a href="{{ route('admin.user_list') }}" class="btn btn-primary">Cancel</a>
                                   <button type="submit" class="btn btn-success">Submit</button>
                                 </div>
                               </div>
@@ -73,7 +104,61 @@
                           </div>
                         </div>
                       </div>
+
+
+                <!-- Change password section starts -->
+                @if (isset($user))
+                <div class="col-md-6 col-xs-12">
+                        <div class="x_panel">
+                          <div class="x_title">
+                            <h2>Password  Reset</h2>
+                            <div class="clearfix"></div>
+                          </div>
+                          <div class="x_content">
+                            <br />
+                            <form class="form-horizontal" method="POST" action="{{ route('user.reset_password',(isset($user) ? $user->id : 0))}}">
+                              <input type="hidden" name="id" value="{{ (isset($user) ? $user->id : 0) }}">
+                              {{ csrf_field() }}
+                              
+                                  <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">New Password</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                      <input type="password" class="form-control" name="password" value="{{ old('password') }}" >
+                                        @if ($errors->has('password'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('password') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                 </div>
+                                 <div class="form-group {{ $errors->has('confirm_password') ? ' has-error' : '' }}">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">Confirm Password</label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                      <input type="password" class="form-control" name="confirm_password" value="{{ old('password') }}" >
+                                        @if ($errors->has('confirm_password'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('confirm_password') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                 </div>
+                              
+                              
+                              <div class="ln_solid"></div>
+                              <div class="form-group">
+                                <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                  <a href="{{ route('admin.user_list') }}" class="btn btn-primary">Cancel</a>
+                                  <button type="submit" class="btn btn-success">Submit</button>
+                                </div>
+                              </div>
                 
+                            </form>
+                          </div>
+                        </div>
+                </div>
+                @endif
+                <!-- Change password section ensd -->
+
           </div>
 
     </div>

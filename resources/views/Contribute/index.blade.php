@@ -101,13 +101,20 @@
                             
                             @if (!Auth::check())
                                 <div  class="form-group text-center">
+
                                   <img alt="140x140" data-src="holder.js/140x140" class="img-rounded" style="width: 140px; height: 140px;" src="{{ asset('images/default-user.png') }}" data-holder-rendered="true" align="center"> 
                                 </div>
                                 <div>Posted by</div>
                                 <h3 style="margin-top: 10px; ">Guest User</h3>
                             @else
-                                <div  class="form-group text-center">
-                                  <img alt="140x140" data-src="holder.js/140x140" class="img-rounded" style="width: 140px; height: 140px;" src="{{ Auth::user()->profile_img }}" data-holder-rendered="true" align="center"> 
+                                <div  class="form-group text-center"> 
+                                    @if( (Auth::user()->profile_img!="") && (Auth::user()->social_reg!=null))
+                                        <img src="{{Auth::user()->profile_img}}"  alt="140x140" data-src="holder.js/140x140" class="img-rounded" style="width: 140px; height: 140px;" data-holder-rendered="true" align="center" >
+                                    @elseif( (Auth::user()->profile_img!="") && (Auth::user()->social_reg==null) )
+                                        <img src="{{ asset('images/default-user.png') }}" alt="140x140" data-src="holder.js/140x140" class="img-rounded" style="width: 140px; height: 140px;" data-holder-rendered="true" align="center" >
+                                    @else
+                                        <img src="{{ asset('images/default-user.png') }}" alt="140x140" data-src="holder.js/140x140" class="img-rounded" style="width: 140px; height: 140px;" data-holder-rendered="true" align="center" >
+                                    @endif
                                 </div>
                                 <div>Posted by</div>
                                 <h3 style="margin-top: 10px; ">{{Auth::user()->name}}</h3>

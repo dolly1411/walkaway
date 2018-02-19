@@ -32,6 +32,11 @@ Route::get('register-points','ContributeController@registerPoints')->name('contr
 
 //admin section 
 Route::get('admin/dashboard','AdminController@index')->name('admin.dashboard');
-Route::get('admin/users','AdminController@userlist')->name('admin.user_list'); 
-Route::get('admin/user/{id}', 'AdminController@userview')->where(['id' => '[0-9]+']);
+Route::get('admin/user','AdminController@userlist')->name('admin.user_list'); 
+Route::get('admin/user/{id}', 'AdminController@userview')->name('admin.user')->where(['id' => '[0-9]+']);
 Route::post('admin/user/edit/{id}', 'AdminController@useredit')->name('user.edit')->where(['id' => '[0-9]+']);
+Route::post('admin/user/reset_password/{id}', 'AdminController@user_reset_password')->name('user.reset_password')->where(['id' => '[0-9]+']);
+Route::get('admin/user/delete/{id}','AdminController@deleteuser')->name('admin.user_delete')->where(['id'=>'[0-9]+']);
+
+
+

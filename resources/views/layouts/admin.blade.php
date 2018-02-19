@@ -36,7 +36,14 @@
             <!-- menu profile quick info -->
             <div class="profile clearfix">
               <div class="profile_pic">
-                <img src="{{Auth::user()->profile_img}}" alt="..." class="img-circle profile_img">
+                @if( (Auth::user()->profile_img!="") && (Auth::user()->social_reg!=null))
+                    <img src="{{Auth::user()->profile_img}}" alt="..." class="img-circle profile_img">
+                @elseif( (Auth::user()->profile_img!="") && (Auth::user()->social_reg==null) )
+                    <img src="{{ asset('images/default-user.png') }}" class="img-circle profile_img" >
+                @else
+                    <img src="{{ asset('images/default-user.png') }}" class="img-circle profile_img" >
+                @endif
+                
               </div>
               <div class="profile_info">
                 <span>Welcome,</span>
@@ -122,6 +129,8 @@
     <script src="{{ asset('admin/build/js/custom.min.js') }}"></script>
     <!-- Datatables -->
     <script src="{{ asset('admin/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <!-- Custom JS -->
+    <script src="{{ asset('js/custom.js') }}"></script>
 	
   </body>
 </html>

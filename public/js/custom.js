@@ -1,0 +1,9 @@
+$(document).ready(function(){
+   $('.master_chk').click(function(){
+ 		if($(this).prop('checked')==true){
+ 			$('.child_chk').prop('checked',true);
+ 		}else{
+ 			$('.child_chk').prop('checked',false);
+ 		}
+   });
+});

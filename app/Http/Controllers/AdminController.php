@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth; 
 use App\User;
+use Hash;
 use App\Point; 
 use App\Place; 
 use Validator; 
@@ -31,7 +32,7 @@ class AdminController extends Controller
         }
 
         public function userlist(){
-            $users = User::get();
+            $users = User::where(['is_deleted'=>0])->get();
             return view('Admin.user_list',compact('users'));
         }
 
@@ -43,25 +44,104 @@ class AdminController extends Controller
             }else{
                 $user = User::find($id); 
                 if($user == null){
+                    session()->flash('error_msg','Invalid user information.'); 
                     return redirect(route('admin.user_list')); 
                 }else{
-                    
                     return view('Admin.user_edit',compact('user','usertype_option')); 
                 }
             }
         }
 
+        public function user_reset_password(Request $request){
+                $post_data = $request->all(); 
+                       
+                if($post_data['id']!=0){ 
+                    $validator =  Validator::make($post_data, [
+                                                                'password' => 'required|min:8|max:255',
+                                                                'confirm_password' => 'required|same:password',
+                                                               ]);
+                }
+             if ($validator->fails()){
+                return redirect()->back()->withErrors($validator->errors());
+
+             }
+             else{
+                    $user = User::find($post_data['id']);
+                    if($user!=null){
+                        unset($post_data['_token']); 
+
+                        User::where('id',$post_data['id'])->update(['password'=>Hash::make($post_data['password'])]);
+                        session()->flash('success_msg','User password reset successfully');
+                         return redirect(route('admin.user',$post_data['id']));
+                    }else{
+                        session()->flash('error_msg','Invalid user information.');
+                        return redirect(route('admin.user_list'));
+                    }    
+              }  
+            
+        }
+
         public function useredit(Request $request){
             $post_data  = $request->all();
-            $validator =  Validator::make($post_data, [
-                'name'=>'required|min:8|max:255',
-                'email'=>'required|email',
-                'type'=>['required',Rule::in([0,1])]
-            ]);
+            if($post_data['id']!=0){
+                $validator =  Validator::make($post_data, [
+                    'name'=>'required|min:8|max:255',
+                    'email'=>'required|email',
+                    'type'=>['required',Rule::in([0,1])]
+
+                ]);
+                
+            }else{
+                $validator =  Validator::make($post_data, [
+                    'name'=>'required|min:8|max:255',
+                    'email'=>'required|email|unique:users',
+                    'password' => 'required|min:8|max:255',
+                    'confirm_password' => 'required|same:password',
+                    'type'=>['required',Rule::in([0,1])]
+                ]);
+            }
             if ($validator->fails()){
                 return redirect()->back()->withErrors($validator->errors());
             }else{
-                dd($post_data);
+               if($post_data['id']==0){
+                    unset($post_data['id']); 
+                    unset($post_data['_token']);
+                    unset($post_data['confirm_password']); 
+                    $post_data['password'] = Hash::make($post_data['password']);
+                    $result = User::create($post_data);
+                    session()->flash('success_msg','User created successfully.');
+                    return redirect(route('admin.user',$result->id));
+               }else{
+                    $user = User::find($post_data['id']);
+                    
+                    if($user!=null){
+                        unset($post_data['_token']); 
+                        User::where('id',$post_data['id'])->update([  'name'=>$post_data['name'],
+                                                                      'email'=>$post_data['email'],
+                                                                      'type'=>$post_data['type']]);
+
+                        session()->flash('success_msg','User infomation updated successfully.');
+                        return redirect(route('admin.user',$post_data['id']));
+                    }else{
+                        session()->flash('error_msg','Invalid user information');
+                        return redirect(route('admin.user_list'));       
+                    }
+               }
+            
             }
         }
+
+        public function deleteuser($id){
+            $user = User::find($id);
+            if($user){
+                User::where(['id'=>$id])->update(['is_deleted'=>'1']);
+                session()->flash('success_msg','user deleted successfully');   
+                return redirect(route('admin.user_list'));
+            }else{
+                session()->flash('error_msg','Invalid user information');
+                return redirect(route('admin.user_list'));  
+            }
+        }
+
 }
+
