@@ -18,6 +18,14 @@
     <link href="{{ asset('admin/build/css/custom.min.css') }}" rel="stylesheet">
     <!-- Datatables -->
     <link herf="{{ asset('admin/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="{{ asset('admin/vendors/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-tagsinput.js') }}"></script>
+    <script src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>
+
+    
     
   </head>
 
@@ -63,7 +71,10 @@
                       <a href="{{route('admin.dashboard')}}"><i class="fa fa-calculator"></i>Dashboard</a>
                   </li>
                   <li>
-                      <a><i class="fa fa-check"></i>Approvals</a>
+                      <a href="{{route('admin.points')}}" ><i class="fa fa-check"></i>Places</a>
+                  </li>
+                  <li>
+                      <a href="{{route('admin.categories')}}" ><i class="fa fa-check"></i>Category</a>
                   </li>
                   <li>
                       <a href="{{route('admin.user_list')}}"><i class="fa fa-user"></i>User
@@ -121,8 +132,6 @@
       </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="{{ asset('admin/vendors/jquery/dist/jquery.min.js') }}"></script>
     <!-- Bootstrap -->
     <script src="{{ asset('admin/vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <!-- Custom Theme Scripts -->
@@ -131,6 +140,7 @@
     <script src="{{ asset('admin/vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <!-- Custom JS -->
     <script src="{{ asset('js/custom.js') }}"></script>
+    
 	
   </body>
 </html>

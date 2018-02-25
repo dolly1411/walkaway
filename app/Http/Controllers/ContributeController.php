@@ -348,5 +348,51 @@ class ContributeController extends Controller
             }        
         }
     }
+
+    public function adminsubmit(Request $request){
+        $input = $request->all();
+        if(!is_null($input['id'])){
+            //handle categories
+            Place_category_mappings::where(['place_id'=>$input['id']])->delete(); 
+            $catIds =$this->filterCategories(explode(',', $input['categories'])); 
+            //saving place_id and category id in db and creating mapping
+            $arr=array();
+            foreach ($catIds as $value) {
+            array_push($arr, array('place_id'=>$input['id'],'category_id'=>$value));    
+            }
+            Place_category_mappings::insert($arr);
+
+            //process images
+            if ($request->hasFile('images'))
+            {
+                $files = $request->file('images');
+                $this->save_image($files,$input['id']);
+            }
+            
+            $update_cols = array('title'=>$input['name'],
+                                 'location'=>$input['location'],
+                                 'brief'=>$input['brief'],
+                                 'approved'=>$input['approved'],
+                                 'status'=>$input['status'],
+                                 'description'=>$input['content']);
+
+            if(($input['approved'] == 1) && ($input['status'] == 1) ){
+                $update_cols['status'] = 1; 
+                $update_cols['approved'] = 1; 
+
+                Asset::where(['place_id'=>$input['id']])->update(['status'=>1]); 
+                Tip::where(['place_id'=>$input['id']])->update(['status'=>1]); 
+                Point::where(['place_id'=>$input['id']])->update(['status'=>1,'approved'=>1]); 
+
+            }
+             
+            Place::where(['id'=>$input['id']])->update($update_cols);  
+            session()->flash('success_msg','Information updated successfully.');
+            return redirect(route('admin.reviewplace',$input['id'])); 
+
+        }else{
+            return redirect(route('admin.points'));
+        }
+    }
     
 }

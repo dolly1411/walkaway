@@ -26,6 +26,7 @@ Route::get('login/google/callback/', 'Auth\LoginController@handleProviderCallbac
 //contribute section 
 Route::get('suggest-new-places','ContributeController@index')->name('contribute.index'); 
 Route::post('contribute/submit','ContributeController@submit')->name('contribute.submit');
+Route::post('admin/contribute/submit','ContributeController@adminsubmit')->name('admin.contribute.submit');
 Route::get('daily-login-points','ContributeController@dailyLoginPoints')->name('contribute.dailylogin')->middleware('auth');
 Route::get('know-your-points','ContributeController@expectedPoints')->name('contribute.expectedpoints')->middleware('auth');
 Route::get('register-points','ContributeController@registerPoints')->name('contribute.registerpoints')->middleware('auth');
@@ -37,6 +38,12 @@ Route::get('admin/user/{id}', 'AdminController@userview')->name('admin.user')->w
 Route::post('admin/user/edit/{id}', 'AdminController@useredit')->name('user.edit')->where(['id' => '[0-9]+']);
 Route::post('admin/user/reset_password/{id}', 'AdminController@user_reset_password')->name('user.reset_password')->where(['id' => '[0-9]+']);
 Route::get('admin/user/delete/{id}','AdminController@deleteuser')->name('admin.user_delete')->where(['id'=>'[0-9]+']);
-
+Route::get('admin/points','AdminController@points')->name('admin.points');
+Route::get('admin/reviewplace/{id}','AdminController@reviewplace')->name('admin.reviewplace')->where(['id' => '[0-9]+']);
+Route::get('admin/deleteassets/{id}','AdminController@deleteassets')->name('admin.deleteassets')->where(['id'=>'[0-9]+']);
+Route::get('admin/categories','AdminController@categories')->name('admin.categories');
+Route::get('admin/activate_category/{id}','AdminController@activate_category')->where(['id'=>'[0-9]+'])->name('admin.category_activate');
+Route::get('admin/deactivate_category/{id}','AdminController@deactivate_category')->where(['id'=>'[0-9]+'])->name('admin.category_deactivate');
+Route::get('admin/delete_category/{id}','AdminController@delete_category')->name('admin.category_delete')->where(['id'=>'[0-9]+']);
 
 

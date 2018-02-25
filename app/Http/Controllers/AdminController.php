@@ -8,6 +8,9 @@ use App\User;
 use Hash;
 use App\Point; 
 use App\Place; 
+use App\Category;
+use App\Asset;
+use App\Place_category_mappings;    
 use Validator; 
 use Illuminate\Validation\Rule;
 
@@ -142,6 +145,93 @@ class AdminController extends Controller
                 return redirect(route('admin.user_list'));  
             }
         }
+
+        public function points(){
+            $places = Place::get();
+            return view('Admin.points_index',compact('places'));
+        }
+
+
+        public function reviewplace($place_id){
+            // Retrive sample categrories 
+            $mapped_categories =  Place_category_mappings::leftJoin('categories','place_category_mappings.category_id','=','categories.id')
+                                  ->select('categories.name')->get(); 
+            $categories  = [] ;
+            foreach ($mapped_categories as $category) {
+                $categories[] = $category->name;
+            }
+            $categories = implode(',', $categories); 
+            
+            $place = Place::where(['id'=>$place_id])->first(); 
+            if($place){
+                $place_points = Point::leftJoin('activities','points.activity_id','=','activities.id')
+                                ->leftJoin('activity_groups','activities.activity_group','=','activity_groups.activity_group')
+                                ->leftJoin('users','points.user_id','=','users.id')
+                                ->where(['points.place_id'=>$place_id])
+                                ->get();        
+                $status_options = array('0'=>'Not Active','1'=>'Active');   
+                $approved_options = array('0'=>'Not Approved','1'=>'Approved');           
+                return view('Admin.reviewplace',compact('place_points','place','categories','status_options','approved_options'));
+            }else{
+                return redirect(route('admin.points'));
+            }    
+        }
+
+        public function deleteassets($asset_id){
+            $asset = Asset::find($asset_id);
+            if($asset){
+                unlink(public_path().DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'places'.DIRECTORY_SEPARATOR.$asset->value); 
+                Asset::where(['id'=>$asset_id])->delete(); 
+                session()->flash('success_msg','Asset deleted successfully.');
+                return redirect(route('admin.reviewplace',$asset->place_id));
+            }else{
+                return redirect(route('admin.points'));
+            }
+        }
+
+        public function categories(){
+            $categories = Category::get(); 
+            return view('Admin.categories',compact('categories')); 
+        }
+
+        public function activate_category($id){
+            $category = Category::find($id); 
+            if($category){
+                Category::where(['id'=>$id])->update(['status'=>1]); 
+                session()->flash('success_msg','Category activated'); 
+                return redirect(route('admin.categories'));
+            }else{
+                session()->flash('error_msg','Internal error.');
+                return redirect(route('admin.categories'));
+            }
+        }
+
+        public function deactivate_category($id){
+            $category = Category::find($id); 
+            if($category){
+                Category::where(['id'=>$id])->update(['status'=>0]); 
+                session()->flash('success_msg','Category de-activated'); 
+                return redirect(route('admin.categories'));
+            }else{
+                session()->flash('error_msg','Internal error.');
+                return redirect(route('admin.categories'));
+            }
+        }
+
+        public function delete_category($id){
+            $category = Category::find($id); 
+            if($category){
+                Category::where(['id'=>$id])->delete();
+                Place_category_mappings::where(['place_id'=>$id]);  
+                session()->flash('success_msg','Category deleted.'); 
+                return redirect(route('admin.categories'));
+            }else{
+                session()->flash('error_msg','Internal error.');
+                return redirect(route('admin.categories'));
+            }
+        }
+
+
 
 }
 

@@ -3,7 +3,7 @@
 return [
 
     'GoogleMap' => [
-        'API_KEY' => 'AIzaSyAJW13ZgTbB--O18AfBWNw0VuwvXSn2xmM',
+        'API_KEY' => 'AIzaSyCdDB3uePbyes1EPq50AO7sK_92wNisjKo',
         'SEARCH_STR' => 'New Delhi, India'
     ],
 
